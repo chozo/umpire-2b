@@ -203,7 +203,7 @@ Cloudflare Workers の静的アセットで `https://game.chozo.net/umpire-2b/` 
 npm run deploy     # ビルドして wrangler deploy
 ```
 
-- 2026-10-25 に初めて公開した
+- 2026-10-25 に初めて公開した。公開URLで `npm run e2e -- https://game.chozo.net/umpire-2b/` がすべて成功し、favicon・OGP画像の取得、末尾スラッシュなしのURLの移動（307）、同じドメインの他のゲームの表示を確かめた
 
 ## まだやっていないこと
 
