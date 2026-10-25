@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#0f1a2e" />
+    <title>二塁塁審ジャッジ</title>
+    <meta name="description" content="アウトか、セーフか。二塁塁審になって、盗塁で滑り込む走者の足とタッチのどちらが先かを見極めるブラウザゲーム。際どい判定は監督のリクエストでスロー検証。誤審3回で失格。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="二塁塁審ジャッジ" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:title" content="二塁塁審ジャッジ" />
+    <meta property="og:description" content="アウトか、セーフか。二塁塁審になって、盗塁で滑り込む走者の足とタッチのどちらが先かを見極めるブラウザゲーム。際どい判定は監督のリクエストでスロー検証。誤審3回で失格。" />
+    <meta property="og:url" content="https://game.chozo.net/umpire-2b/" />
+    <meta property="og:image" content="https://game.chozo.net/umpire-2b/ogp.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="二塁塁審ジャッジ — 足が先か、タッチが先か。塁審の目線と、上下2画面のスーパースローのリプレイ画面" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="二塁塁審ジャッジ" />
+    <meta name="twitter:description" content="アウトか、セーフか。二塁塁審になって、盗塁で滑り込む走者の足とタッチのどちらが先かを見極めるブラウザゲーム。際どい判定は監督のリクエストでスロー検証。誤審3回で失格。" />
+    <meta name="twitter:image" content="https://game.chozo.net/umpire-2b/ogp.png" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <div id="view">
+        <canvas id="c"></canvas>
+
+        <div id="hud" hidden>
+          <div class="hud-l"><small>第</small><span id="hud-count">1</span><small>走者</small></div>
+          <div class="hud-r">
+            <div id="hud-score">0</div>
+            <div id="hud-miss"></div>
+          </div>
+        </div>
+        <div id="timer" hidden><div id="timer-bar"></div></div>
+        <div id="hint" hidden></div>
+        <div id="call" hidden></div>
+        <div id="verdict" hidden></div>
+
+        <div id="request" hidden>
+          <div class="req-main">リクエスト！</div>
+          <div class="req-sub" id="request-sub"></div>
+          <div class="req-skip">タップで結果へ</div>
+        </div>
+
+        <div id="replay-tag" hidden>REPLAY <small id="replay-tag-sub">リプレイ検証中</small><span class="skip">タップで結果へ</span></div>
+        <div id="split" hidden>
+          <div class="panel top">
+            <div class="lbl">足 → ベース</div>
+            <div class="stamp" id="stamp-foot" hidden></div>
+          </div>
+          <div class="panel bottom">
+            <div class="lbl">グラブ → 走者</div>
+            <div class="stamp" id="stamp-tag" hidden></div>
+          </div>
+          <div id="clock">0.000</div>
+        </div>
+        <div id="replay-result" hidden></div>
+
+        <section id="title" class="screen">
+          <div class="title-box">
+            <div class="kicker">SECOND BASE UMPIRE</div>
+            <h1>二塁塁審<br />ジャッジ</h1>
+            <p class="lead">足が先か、タッチが先か。<br />キミの目でコールせよ。</p>
+            <ul class="rules">
+              <li>滑り込む走者の足が<b>ベースに触れる</b>のと、ボールを持ったグラブが<b>走者に触れる</b>のを見比べる</li>
+              <li><b>タッチが先ならアウト</b>、足が先ならセーフ</li>
+              <li>両方が起きてから <b>2秒以内</b> にコール</li>
+              <li>際どい判定には<b>監督のリクエスト</b>。スローで検証される</li>
+              <li><b>誤審3回で失格</b></li>
+            </ul>
+            <button id="btn-start" class="primary">プレイボール</button>
+            <p class="keys">PC: <kbd>F</kbd> セーフ ／ <kbd>J</kbd> アウト ／ <kbd>M</kbd> BGM</p>
+            <button class="bgm-toggle" type="button">BGM オン</button>
+          </div>
+        </section>
+
+        <section id="result" class="screen" hidden>
+          <div class="title-box">
+            <div class="kicker" id="res-kicker">GAME OVER</div>
+            <h2 id="res-head">失格！</h2>
+            <div class="rank" id="res-rank"></div>
+            <div class="score-big"><span id="res-score">0</span><small>点</small></div>
+            <dl class="stats">
+              <dt>正しいコール</dt><dd id="res-correct"></dd>
+              <dt>際どい判定</dt><dd id="res-close"></dd>
+              <dt>自己ベスト</dt><dd id="res-best"></dd>
+            </dl>
+            <button id="btn-retry" class="primary">もう一度</button>
+            <button id="btn-title" class="ghost">タイトルへ</button>
+            <button class="bgm-toggle" type="button">BGM オン</button>
+          </div>
+        </section>
+      </div>
+
+      <div id="controls">
+        <button id="btn-safe" class="call-btn safe idle"><span>セーフ</span><small>F</small></button>
+        <button id="btn-out" class="call-btn out idle"><span>アウト</span><small>J</small></button>
+      </div>
+    </div>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
