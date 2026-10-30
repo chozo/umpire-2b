@@ -1,0 +1,114 @@
+/* 告知動画の見た目。座標は 540×960（縦型）または 960×540（横型）の CSS ピクセル。撮影は2倍。 */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: var(--W); height: var(--H); overflow: hidden; }
+body {
+  font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", sans-serif;
+  font-weight: 900;
+  color: #fff;
+  background: #111;
+}
+
+/* 背景。ゲームの世界観に合わせて変える（scenario.js の config.background でも上書きできる） */
+#bg {
+  position: absolute; inset: 0;
+  /* OGP と同じ: ナイターの紺色の空、照明、内野の土の色 */
+  background:
+    radial-gradient(ellipse at 30% 105%, #a0683a 0, #6b4423 30%, transparent 62%),
+    radial-gradient(circle at 12% 2%, rgba(255, 255, 255, 0.28) 0, transparent 22%),
+    radial-gradient(circle at 88% 4%, rgba(255, 255, 255, 0.22) 0, transparent 20%),
+    linear-gradient(#0f1a2e, #13233d 60%, #1d2c48);
+}
+
+#camera { position: absolute; inset: 0; }
+
+#game-box {
+  position: absolute;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45), 0 0 0 5px rgba(255, 255, 255, 0.9);
+  background: #000;
+}
+#game { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; display: block; }
+
+#overlay { position: absolute; inset: 0; pointer-events: none; }
+
+/* 字幕: 大きく太く、太い縁取り。中央付近に置く */
+.caption {
+  position: absolute; left: 50%;
+  width: 88%;
+  text-align: center;
+  font-size: 46px; line-height: 1.15; letter-spacing: 0.02em;
+  --stroke: #0b1220;
+  -webkit-text-stroke: 10px var(--stroke);
+  paint-order: stroke fill;
+  text-shadow: 0 6px 0 rgba(0, 0, 0, 0.35);
+  transform-origin: 50% 50%;
+}
+.caption span { display: block; }
+
+/* 効果文字（「シャキン！」など） */
+.fx {
+  position: absolute;
+  font-size: 72px; line-height: 1;
+  color: #ffe14d;
+  --stroke: #0b1220;
+  -webkit-text-stroke: 12px var(--stroke);
+  paint-order: stroke fill;
+  text-shadow: 0 8px 0 rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+}
+.fx span { display: block; text-align: center; }
+
+/* 早送り・スローの表示。右端（約15%）はアプリのボタンが重なるので避ける */
+.badge {
+  position: absolute; left: 7%; top: 10%;
+  padding: 6px 16px; border-radius: 999px;
+  background: #fde047; color: #0b1220;
+  font-size: 30px;
+  transform-origin: 0 50%;
+}
+
+.flash { position: absolute; inset: 0; background: #fff; }
+
+/* タイトル・エンドカード */
+.card {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.card.dim { background: rgba(8, 14, 28, 0.6); }
+.card.end { background: radial-gradient(ellipse at 30% 105%, #a0683a 0, #6b4423 30%, transparent 62%), linear-gradient(#0f1a2e, #13233d 60%, #1d2c48); } /* 不透明にする（表紙になる） */
+.card .inner {
+  width: 84%; /* 真ん中に置く */
+  margin-bottom: 8%; /* 下の説明文の領域を避けて少し上へ */
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 18px;
+}
+.card img.logo { max-width: 78%; max-height: 300px; }
+.card .title {
+  font-size: 70px; line-height: 1.1;
+  -webkit-text-stroke: 12px #0b1220; paint-order: stroke fill;
+  text-shadow: 0 9px 0 #1d4ed8;
+}
+.card .sub { color: #fde047; }
+.card .sub {
+  font-size: 34px; line-height: 1.3;
+  -webkit-text-stroke: 8px #0b1220; paint-order: stroke fill;
+}
+.card .cta {
+  margin-top: 12px; padding: 14px 34px; border-radius: 999px;
+  background: #fde047; color: #0b1220; font-size: 38px;
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.3);
+}
+.card .url {
+  font-size: 24px; font-weight: 800; letter-spacing: 0.01em; white-space: nowrap;
+  padding: 10px 18px; border-radius: 12px;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+/* 確認用モードだけで出す、ショート動画アプリの UI が重なる領域 */
+#guides { position: absolute; inset: 0; pointer-events: none; }
+#guides .zone { position: absolute; background: rgba(255, 0, 0, 0.22); outline: 2px dashed rgba(255, 0, 0, 0.8); }
+#guides .top { left: 0; right: 0; top: 0; height: 8%; }
+#guides .bottom { left: 0; right: 0; bottom: 0; height: 20%; }
+#guides .right { right: 0; top: 8%; bottom: 20%; width: 15%; }
+#timecode { position: absolute; left: 8px; top: 8px; font: 700 22px/1 monospace; color: #0f0; background: #000; padding: 4px 6px; }
